@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Resources\PostResource;
+use App\Models\Post;
 use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\get;
@@ -13,9 +15,9 @@ test('It Renders the Index Page', function () {
 });
 
 test('It pass posts', function () {
+
+    $posts = Post::factory(3)->create();
+
     get(route('posts.index'))
-        ->assertInertia(
-            fn(AssertableInertia $inertia) => $inertia
-                ->has('posts')
-        );
+        ->assertHasPaginatedResource('posts', PostResource::collection($posts->reverse()));
 });
