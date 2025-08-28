@@ -23,4 +23,4 @@ test('passes comments to the view', function () {
 
     get(route('posts.show', $post))
         ->assertHasPaginatedResource('comments', CommentResource::collection($comments->reverse()));
-})->only();
+});

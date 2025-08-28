@@ -31,6 +31,7 @@
                     <Link v-for="link in meta.links"
                           :only="only"
                           :href="link.url"
+                          :preserve-scroll="true"
                           class="relative inline-flex items-center first-of-type:rounded-l-md last-of-type:rounded-r-md px-3 py-2"
                           :class="{
                            'z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600': link.active,

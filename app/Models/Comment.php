@@ -7,14 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-    /** @use HasFactory<\Database\Factories\CommentFactory> */
-    use HasFactory;
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'body',
         'user_id',
         'post_id',
     ];
+
+    /** @use HasFactory<\Database\Factories\CommentFactory> */
+    use HasFactory;
 
     public function user()
     {

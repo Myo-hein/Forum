@@ -8,10 +8,25 @@
             <span class="first-letter:uppercase block pt-1 text-xs text-gray-600">By {{ comment.user.name }} {{ relativeDate(comment.created_at) }} ago</span>
         </div>
     </div>
+
+    <div class="mt-2">
+        <form v-if="comment.can?.delete" @submit.prevent="deleteComment">
+            <DangerButton type="submit" class="ml-2" :disabled="false">
+                Delete
+            </DangerButton>
+        </form>
+    </div>
 </template>
 
 <script setup>
 import {relativeDate} from "@/Utilities/date.js";
+import { router } from "@inertiajs/vue3";
+import DangerButton from "./DangerButton.vue";
 
-defineProps(['comment']);
+const props = defineProps(['comment']);
+
+const deleteComment = () => router.delete(route('comments.destroy', props.comment.id), {
+    preserveScroll: true,
+});
+
 </script>
