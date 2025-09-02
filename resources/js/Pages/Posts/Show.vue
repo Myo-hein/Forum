@@ -8,12 +8,14 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextArea from '@/Components/TextArea.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { relativeDate } from '@/Utilities/date';
-import { useForm } from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
 
 const props = defineProps([
     'post',
     'comments'
 ]);
+
+console.log(props.comments.meta.current_page);
 
 const formattedDate = (date) => {
     return relativeDate(date);
@@ -29,6 +31,13 @@ const addComment = () => {
         onSuccess: () => commentForm.reset()
     });
 }
+
+const deleteComment = (commentID) => router.delete(route('comments.destroy', {
+    comment: commentID,
+    page: props.comments.meta.current_page
+}), {
+    preserveScroll: true,
+});
 
 </script>
 
@@ -59,7 +68,7 @@ const addComment = () => {
 
                 <ul class="divide-y">
                     <li v-for="comment in comments.data" :key="comment.id" class="py-4">
-                        <Comment :comment="comment"/>
+                        <Comment :comment="comment" :page="comments.meta.current_page" @delete="deleteComment"/>
                     </li>
                 </ul>
 

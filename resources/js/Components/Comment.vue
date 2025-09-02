@@ -9,8 +9,8 @@
         </div>
     </div>
 
-    <div class="mt-2">
-        <form v-if="comment.can?.delete" @submit.prevent="deleteComment">
+    <div class="mt-2 flex-1">
+        <form v-if="comment.can?.delete" @submit.prevent="$emit('delete', (comment.id))" class="sm:flex sm:justify-end">
             <DangerButton type="submit" class="ml-2" :disabled="false">
                 Delete
             </DangerButton>
@@ -20,13 +20,12 @@
 
 <script setup>
 import {relativeDate} from "@/Utilities/date.js";
-import { router } from "@inertiajs/vue3";
 import DangerButton from "./DangerButton.vue";
 
-const props = defineProps(['comment']);
+const props = defineProps(['comment', 'page']);
 
-const deleteComment = () => router.delete(route('comments.destroy', props.comment.id), {
-    preserveScroll: true,
-});
+const emit = defineEmits(['delete']);
+
+
 
 </script>
