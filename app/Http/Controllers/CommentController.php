@@ -5,35 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    use AuthorizesRequests;
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    use AuthorizesRequests, DispatchesJobs;
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    // public function __construct()
+    // {
+    //     $this->authorizeResource(Comment::class, 'comment');
+    // }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request, Post $post)
     {
-        $data = $request->validate([
-            'body' => ['required', 'string', 'max:2500'],
-        ]);
+        $this->authorize('create', Comment::class);
+
+        $data = $request->validate(['body' => ['required', 'string', 'max:2500']]);
 
         Comment::create([
             ...$data,
@@ -41,30 +32,24 @@ class CommentController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        return to_route('posts.show', $post);
+        return to_route('posts.show', $post)->banner('Comment added successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Comment $comment)
-    {
-        //
-    }
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Comment $comment)
     {
-        //
+        $this->authorize('update', $comment);
+
+        $data = $request->validate(['body' => ['required', 'string', 'max:2500']]);
+
+        $comment->update($data);
+
+        return to_route('posts.show', [
+            'post' => $comment->post_id,
+            'page' => $request->query('page')
+        ])->banner('Comment updated successfully.');
     }
 
     /**
@@ -76,6 +61,9 @@ class CommentController extends Controller
 
         $comment->delete();
 
-        return to_route('posts.show', ['post' => $comment->post, 'page' => $request->query('page')]);
+        return to_route('posts.show', [
+            'post' => $comment->post_id,
+            'page' => $request->query('page')
+        ])->banner('Comment deleted successfully.');
     }
 }

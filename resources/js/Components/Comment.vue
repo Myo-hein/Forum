@@ -11,6 +11,9 @@
 
     <div class="mt-2 flex-1">
         <form v-if="comment.can?.delete" @submit.prevent="$emit('delete', (comment.id))" class="sm:flex sm:justify-end">
+            <PrimaryButton type="button" class="mr-2" @click="$emit('edit', (comment.id))" :disabled="editDisabled">
+                Edit
+            </PrimaryButton>
             <DangerButton type="submit" class="ml-2" :disabled="false">
                 Delete
             </DangerButton>
@@ -21,11 +24,10 @@
 <script setup>
 import {relativeDate} from "@/Utilities/date.js";
 import DangerButton from "./DangerButton.vue";
+import PrimaryButton from "./PrimaryButton.vue";
 
-const props = defineProps(['comment', 'page']);
+const props = defineProps(['comment', 'page', 'editDisabled']);
 
-const emit = defineEmits(['delete']);
-
-
+const emit = defineEmits(['delete', 'edit']);
 
 </script>

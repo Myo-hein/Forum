@@ -40,4 +40,4 @@ it('prevents deleting a comment posted more than an hour ago', function () {
     $this->actingAs(User::factory()->create())
         ->delete(route('comments.destroy', $comment))
         ->assertForbidden();
-})->only();
+});

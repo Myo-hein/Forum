@@ -5,17 +5,18 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Pagination from '@/Components/Pagination.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextArea from '@/Components/TextArea.vue';
+import { useConfirm } from '@/Composables/useConfirm';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { relativeDate } from '@/Utilities/date';
 import { router, useForm } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 const props = defineProps([
     'post',
     'comments'
 ]);
-
-console.log(props.comments.meta.current_page);
 
 const formattedDate = (date) => {
     return relativeDate(date);
@@ -25,6 +26,28 @@ const commentForm =  useForm({
     body: ''
 });
 
+const commentTextAreaRef = ref(null);
+
+const commentIdBeingEdited = ref(null);
+
+const commentBeingEdited = computed(
+    () => props.comments.data.find(
+        comment => comment.id === commentIdBeingEdited.value
+    ));
+
+const { confirmation } = useConfirm();
+
+const cancelEdit = () => {
+    commentIdBeingEdited.value = null;
+    commentForm.reset();
+};
+
+const editComment = (commentId) => {
+    commentIdBeingEdited.value = commentId;
+    commentForm.body = commentBeingEdited.value?.body;
+    commentTextAreaRef.value?.focus();
+};
+
 const addComment = () => {
     commentForm.post(route('posts.comments.store', props.post.data.id), {
         preserveScroll: true,
@@ -32,12 +55,28 @@ const addComment = () => {
     });
 }
 
-const deleteComment = (commentID) => router.delete(route('comments.destroy', {
-    comment: commentID,
-    page: props.comments.meta.current_page
-}), {
-    preserveScroll: true,
-});
+const updateComment = () => {
+    commentForm.put(route('comments.update', {
+        comment: commentIdBeingEdited.value,
+        page: props.comments.meta.current_page
+    }), {
+        preserveScroll: true,
+        onSuccess: () => cancelEdit()
+    });
+}
+
+const deleteComment = async (commentID) => {
+    if (! await confirmation('Are you sure you want to delete this comment?')) {
+        return;
+    }
+
+    router.delete(route('comments.destroy', {
+        comment: commentID,
+        page: props.comments.meta.current_page
+    }), {
+        preserveScroll: true,
+    });
+}
 
 </script>
 
@@ -58,17 +97,35 @@ const deleteComment = (commentID) => router.delete(route('comments.destroy', {
                 <form @submit.prevent v-if="$page.props.auth.user" class="mt-4">
                     <div>
                         <InputLabel class="sr-only" for="body" value="Add a comment"/>
-                        <TextArea id="body" class="mt-1 block w-full" rows="3" v-model="commentForm.body" :disabled="commentForm.processing" placeholder="How do you think?"/>
+                        <TextArea ref="commentTextAreaRef" id="body" class="mt-1 block w-full" rows="3" v-model="commentForm.body" :disabled="commentForm.processing" placeholder="How do you think?"/>
                         <InputError :message="commentForm.errors.body" class="mt-2"/>
                     </div>
-                    <PrimaryButton class="mt-2" :disabled="commentForm.processing" @click="addComment">
-                        Post Comment
-                    </PrimaryButton>
+                    <PrimaryButton
+                        class="mt-2"
+                        :disabled="commentForm.processing"
+                        @click="() => commentIdBeingEdited ? updateComment() : addComment()"
+                        v-text="commentIdBeingEdited ? 'Update Comment' : 'Add Comment'"
+                    ></PrimaryButton>
+                    <SecondaryButton
+                        v-if="commentIdBeingEdited"
+                        class="mt-2 ml-2"
+                        type="button"
+                        :disabled="commentForm.processing"
+                        @click="cancelEdit"
+                    >
+                        Cancel
+                    </SecondaryButton>
                 </form>
 
                 <ul class="divide-y">
                     <li v-for="comment in comments.data" :key="comment.id" class="py-4">
-                        <Comment :comment="comment" :page="comments.meta.current_page" @delete="deleteComment"/>
+                        <Comment
+                            :comment="comment"
+                            :page="comments.meta.current_page"
+                            :editDisabled="commentIdBeingEdited === comment.id"
+                            @delete="deleteComment"
+                            @edit="editComment"
+                        />
                     </li>
                 </ul>
 
