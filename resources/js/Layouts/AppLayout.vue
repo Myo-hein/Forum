@@ -35,6 +35,12 @@ const menu = [
         name: 'Posts',
         route: 'posts.index',
         url: route('posts.index'),
+    },
+    {
+        name: 'Create Posts',
+        route: 'posts.create',
+        url: route('posts.create'),
+        when: () => usePage().props.permissions.create_post,
     }
 ];
 

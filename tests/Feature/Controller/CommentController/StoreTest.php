@@ -19,9 +19,10 @@ it('requires authentication', function () {
 
 it('can store a comment', function () {
     $user = User::factory()->create();
+
     $post = Post::factory()->create();
 
-    actingAs($user)->post(route('posts.comments.store', $post), [
+    $this->actingAs($user)->post(route('posts.comments.store', $post), [
         'body' => 'This is a comment',
     ]);
 
@@ -35,7 +36,7 @@ it('can store a comment', function () {
 it('redirects to the post show page', function () {
     $post = Post::factory()->create();
 
-    actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create())
         ->post(route('posts.comments.store', $post), [
             'body' => 'This is a comment',
         ])
@@ -46,7 +47,7 @@ it('requires a valid body', function ($value) {
     $post = Post::factory()->create();
     $user = User::factory()->create();
 
-    actingAs($user)
+    $this->actingAs($user)
         ->post(route('posts.comments.store', $post), [
             'body' => $value,
         ]);

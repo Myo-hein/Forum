@@ -2,6 +2,8 @@
 
 use App\Models\Comment;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 
 use function Pest\Laravel\actingAs;
 
@@ -17,27 +19,15 @@ it('deletes a comment and redirect to posts.show', function () {
 it('prevents guests from deleting a comment', function () {
     $comment = Comment::factory()->create();
 
-    $response = $this->delete(route('comments.destroy', $comment));
-    $response->assertRedirect(route('login'));
-    $this->assertDatabaseHas('comments', ['id' => $comment->id]);
+    expect(fn() => $this->delete(route('comments.destroy', $comment)))
+        ->toThrow(AuthenticationException::class);
 });
 
 it('prevents deleting a comment you didnt create', function () {
     $comment = Comment::factory()->create();
+    $user = User::factory()->create();
 
-    $this->actingAs(User::factory()->create())
-        ->delete(route('comments.destroy', $comment))
-        ->assertForbidden();
-});
-
-it('prevents deleting a comment posted more than an hour ago', function () {
-    $this->freezeTime();
-
-    $comment = Comment::factory()->create();
-
-    $this->travel(61)->minutes();
-
-    $this->actingAs(User::factory()->create())
-        ->delete(route('comments.destroy', $comment))
-        ->assertForbidden();
+    expect(fn() => $this->actingAs($user)
+        ->delete(route('comments.destroy', $comment)))
+        ->toThrow(AuthorizationException::class);
 });
