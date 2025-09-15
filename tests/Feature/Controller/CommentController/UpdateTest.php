@@ -39,24 +39,11 @@ it('a user can update his comment', function () {
 });
 
 it('redirect post show page by post id after comment updated', function () {
-    $comment = Comment::factory()->create([
-        'body' => 'Original content',
-    ]);
+    $comment = Comment::factory()->create();
 
-    $newComment = 'Updated content';
-
-    $response = actingAs($comment->user)
-        ->put(route('comments.update', $comment), [
-            'body' => $newComment,
-            'page' => 2,
-        ]);
-
-    $this->assertDatabaseHas('comments', [
-        'id' => $comment->id,
-        'body' => $newComment
-    ]);
-
-    $response->assertRedirect(route('posts.show', $comment->post));
+    actingAs($comment->user)
+        ->put(route('comments.update', ['comment' => $comment, 'page' => 2]), ['body' => 'This is the new body'])
+        ->assertRedirect($comment->post->showRoute(['page' => 2]));
 });
 
 it('can not update comment from other users', function () {

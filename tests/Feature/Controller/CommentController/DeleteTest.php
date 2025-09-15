@@ -6,15 +6,30 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\delete;
 
-it('deletes a comment and redirect to posts.show', function () {
+it('requires authentication!', function () {
+
+    expect(fn() => delete(route('comments.destroy', Comment::factory()->create())))
+        ->toThrow(AuthenticationException::class);
+});
+
+it('can delete a comment', function () {
+    $comment = Comment::factory()->create();
+
+    actingAs($comment->user)
+        ->delete(route('comments.destroy', $comment));
+
+    $this->assertModelMissing($comment);
+});
+
+it('deletes a comment and redirect to posts.show!', function () {
     $comment = Comment::factory()->create();
 
     actingAs($comment->user)
         ->delete(route('comments.destroy', $comment))
-        ->assertRedirect(route('posts.show', $comment->post));
+        ->assertRedirect($comment->post->showRoute(['page' => 2]));
 });
-
 
 it('prevents guests from deleting a comment', function () {
     $comment = Comment::factory()->create();

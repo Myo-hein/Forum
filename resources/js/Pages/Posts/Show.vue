@@ -87,8 +87,7 @@ const deleteComment = async (commentID) => {
 
             <h2 class="text-sm text-gray-600">{{ formattedDate(post.data.created_at) }} ago by {{ post.data.user.name }}</h2>
 
-            <article class="mt-6 ">
-                <pre class="whitespace-pre-wrap font-sans">{{ post.data.body }}</pre>
+            <article class="mt-6 prose prose-sm max-w-none" v-html="post.data.html">
             </article>
 
             <div class="mt-10">

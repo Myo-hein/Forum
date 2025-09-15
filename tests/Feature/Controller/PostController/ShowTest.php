@@ -11,7 +11,7 @@ test('can show a post', function () {
 
     $post->load('user');
 
-    get(route('posts.show', $post))
+    get($post->showRoute())
         ->assertComponent('Posts/Show');
 });
 
@@ -21,6 +21,6 @@ test('passes comments to the view', function () {
 
     $comments->load('user');
 
-    get(route('posts.show', $post))
+    get($post->showRoute())
         ->assertHasPaginatedResource('comments', CommentResource::collection($comments->reverse()));
 });

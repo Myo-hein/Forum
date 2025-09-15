@@ -12,11 +12,6 @@ class CommentController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs;
 
-    // public function __construct()
-    // {
-    //     $this->authorizeResource(Comment::class, 'comment');
-    // }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -32,7 +27,8 @@ class CommentController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        return to_route('posts.show', $post)->banner('Comment added successfully.');
+        return redirect($post->showRoute())
+            ->banner('Comment added successfully.');
     }
 
     /**
@@ -46,10 +42,9 @@ class CommentController extends Controller
 
         $comment->update($data);
 
-        return to_route('posts.show', [
-            'post' => $comment->post_id,
-            'page' => $request->query('page')
-        ])->banner('Comment updated successfully.');
+        return redirect($comment->post->showRoute(
+            ['page' => $request->query('page')]
+        ))->banner('Comment updated successfully.');
     }
 
     /**
@@ -61,9 +56,8 @@ class CommentController extends Controller
 
         $comment->delete();
 
-        return to_route('posts.show', [
-            'post' => $comment->post_id,
-            'page' => $request->query('page')
-        ])->banner('Comment deleted successfully.');
+        return redirect($comment->post->showRoute(
+            ['page' => $request->query('page')]
+        ))->banner('Comment deleted successfully.');
     }
 }

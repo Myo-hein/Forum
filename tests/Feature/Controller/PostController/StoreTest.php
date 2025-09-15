@@ -38,11 +38,12 @@ it('store a post!', function () {
 });
 
 
-it('redirects to posts.show!', function () {
+it('redirects to the post show page', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)->post(route('posts.store'), $this->validData)
-        ->assertRedirect(route('posts.show', Post::latest('id')->first()));
+    $this->actingAs($user)
+        ->post(route('posts.store', $this->validData))
+        ->assertRedirect(Post::latest('id')->first()->showRoute());
 });
 
 
@@ -65,7 +66,7 @@ it('requires a valid title', function ($badTitle) {
     false,
     '',
     str_repeat('a', 256)
-])->only();
+]);
 
 it('requires a valid body', function ($badBody) {
     $user = User::factory()->create();

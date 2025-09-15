@@ -16,7 +16,9 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->restrictOnDelete();
             $table->string('title');
+            $table->string('slug')->unique()->nullable();
             $table->longText('body');
+            $table->longText('html')->nullable();
             $table->timestamps();
         });
     }

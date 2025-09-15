@@ -21,6 +21,11 @@
     },
     "dependencies": {
         "@heroicons/vue": "^2.2.0",
-        "date-fns": "^4.1.0"
+        "@tiptap/pm": "^3.4.2",
+        "@tiptap/starter-kit": "^3.4.2",
+        "@tiptap/vue-3": "^3.4.2",
+        "date-fns": "^4.1.0",
+        "remixicon": "^4.6.0",
+        "tiptap-markdown": "^0.9.0"
     }
 }

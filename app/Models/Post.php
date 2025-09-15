@@ -2,18 +2,23 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ConvertMarkdownToHtml;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Post extends Model
 {
     /** @use HasFactory<\Database\Factories\PostFactory> */
     use HasFactory;
+    use ConvertMarkdownToHtml;
 
     protected $fillable = [
         'title',
         'body',
         'user_id',
+        'html',
     ];
 
     public function user()
@@ -24,5 +29,19 @@ class Post extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function title(): Attribute
+    {
+        return Attribute::set(fn($value) => Str::title($value));
+    }
+
+    public function showRoute(array $parameters = [])
+    {
+        return route('posts.show', [
+            $this,
+            Str::slug($this->title),
+            ...$parameters
+        ]);
     }
 }
