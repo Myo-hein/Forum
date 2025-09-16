@@ -96,7 +96,7 @@ const deleteComment = async (commentID) => {
                 <form @submit.prevent v-if="$page.props.auth.user" class="mt-4">
                     <div>
                         <InputLabel class="sr-only" for="body" value="Add a comment"/>
-                        <MarkdownEditor ref="commentTextAreaRef" id="body" class="mt-1 block w-full" v-model="commentForm.body" editorClass="min-h-[160px]" :disabled="commentForm.processing" placeholder="Speak your mind Spock..."/>
+                        <MarkdownEditor ref="commentTextAreaRef" id="body" class="mt-1 block w-full" v-model="commentForm.body" editorClass="min-h-[160px]" :disabled="commentForm.processing" placeholder="Speak your mind Spock..." />
                         <InputError :message="commentForm.errors.body" class="mt-2"/>
                     </div>
                     <PrimaryButton
