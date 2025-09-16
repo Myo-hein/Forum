@@ -25,6 +25,7 @@ class CommentController extends Controller
             ...$data,
             'post_id' => $post->id,
             'user_id' => $request->user()->id,
+
         ]);
 
         return redirect($post->showRoute())

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ConvertMarkdownToHtml;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    use ConvertMarkdownToHtml;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -16,6 +19,7 @@ class Comment extends Model
         'body',
         'user_id',
         'post_id',
+        'html',
     ];
 
     /** @use HasFactory<\Database\Factories\CommentFactory> */

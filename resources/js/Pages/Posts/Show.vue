@@ -3,10 +3,10 @@ import Comment from '@/Components/Comment.vue';
 import Container from '@/Components/Container.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import MarkdownEditor from '@/Components/MarkdownEditor.vue';
 import Pagination from '@/Components/Pagination.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextArea from '@/Components/TextArea.vue';
 import { useConfirm } from '@/Composables/useConfirm';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { relativeDate } from '@/Utilities/date';
@@ -96,7 +96,7 @@ const deleteComment = async (commentID) => {
                 <form @submit.prevent v-if="$page.props.auth.user" class="mt-4">
                     <div>
                         <InputLabel class="sr-only" for="body" value="Add a comment"/>
-                        <TextArea ref="commentTextAreaRef" id="body" class="mt-1 block w-full" rows="3" v-model="commentForm.body" :disabled="commentForm.processing" placeholder="How do you think?"/>
+                        <MarkdownEditor ref="commentTextAreaRef" id="body" class="mt-1 block w-full" v-model="commentForm.body" editorClass="min-h-[160px]" :disabled="commentForm.processing" placeholder="Speak your mind Spock..."/>
                         <InputError :message="commentForm.errors.body" class="mt-2"/>
                     </div>
                     <PrimaryButton
