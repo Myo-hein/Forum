@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\ServiceProvider;
@@ -36,28 +35,22 @@ class TestServiceProvider extends ServiceProvider
         });
 
         AssertableInertia::macro('hasPaginatedResource', function (string $key, ResourceCollection $resource) {
-            $this->has($key);
+            $this->hasResource("{$key}.data", $resource);
             expect($this->prop($key))->toHaveKeys(['data', 'links', 'meta']);
 
             return $this;
         });
 
         TestResponse::macro('assertHasResource', function (string $key, JsonResource $resource) {
-            return $this->assertInertia(
-                fn(AssertableInertia $inertia) => $inertia->hasResource($key, $resource)
-            );
+            return $this->assertInertia(fn(AssertableInertia $inertia) => $inertia->hasResource($key, $resource));
         });
 
         TestResponse::macro('assertHasPaginatedResource', function (string $key, ResourceCollection $resource) {
-            return $this->assertInertia(
-                fn(AssertableInertia $inertia) => $inertia->hasPaginatedResource($key, $resource)
-            );
+            return $this->assertInertia(fn(AssertableInertia $inertia) => $inertia->hasPaginatedResource($key, $resource));
         });
 
         TestResponse::macro('assertComponent', function (string $component) {
-            return $this->assertInertia(
-                fn(AssertableInertia $inertia) => $inertia->component($component, true)
-            );
+            return $this->assertInertia(fn(AssertableInertia $inertia) => $inertia->component($component, true));
         });
     }
 }

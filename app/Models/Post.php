@@ -31,6 +31,11 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
+    public function topic()
+    {
+        return $this->belongsTo(Topic::class);
+    }
+
     public function title(): Attribute
     {
         return Attribute::set(fn($value) => Str::title($value));

@@ -2,11 +2,11 @@
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\put;
+
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Validation\ValidationException;
 
 it('requires authentication to update a comment', function () {

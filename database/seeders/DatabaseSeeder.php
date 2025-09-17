@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Comment;
+use App\Models\Topic;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,16 +16,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(TopicSeeder::class);
+        $topics = Topic::all();
+
+
         $users = User::factory(10)->create();
 
         $posts = Post::factory(200)
             ->withFixture()
             ->has(Comment::factory(15)->recycle($users))
-            ->recycle($users)
+            ->recycle([$users, $topics])
             ->create();
 
         $me = User::factory()
-            ->has(Post::factory(45)->withFixture())
+            ->has(Post::factory(45)->recycle($topics)->withFixture())
             ->has(Comment::factory(100)->recycle($posts))
             ->create([
                 'name' => 'Myo Hein',

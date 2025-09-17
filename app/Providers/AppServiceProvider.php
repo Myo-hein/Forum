@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Testing\TestResponse;
+use Inertia\Testing\AssertableInertia as InertiaAssert;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        TestResponse::macro('assertComponent', function (string $component, array $props = []) {
+            /** @var \Illuminate\Testing\TestResponse $this */
+            return InertiaAssert::fromTestResponse($this)->component($component, $props);
+        });
+
+        TestResponse::macro('assertHasPaginatedResource', function (string $resourceName, $resourceClass) {
+            /** @var \Illuminate\Testing\TestResponse $this */
+            return InertiaAssert::fromTestResponse($this)->hasPaginatedResource($resourceName, $resourceClass);
+        });
     }
 }

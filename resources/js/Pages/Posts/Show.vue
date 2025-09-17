@@ -83,7 +83,7 @@ const deleteComment = async (commentID) => {
 <template>
     <AppLayout>
         <Container>
-            <h1 class="text-2xl font-bold">{{ post.data.title }}</h1>
+            <PageHeading>{{ post.data.title }}</PageHeading>
 
             <h2 class="text-sm text-gray-600">{{ formattedDate(post.data.created_at) }} ago by {{ post.data.user.name }}</h2>
 
