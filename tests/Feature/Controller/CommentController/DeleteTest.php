@@ -27,7 +27,7 @@ it('deletes a comment and redirect to posts.show!', function () {
     $comment = Comment::factory()->create();
 
     actingAs($comment->user)
-        ->delete(route('comments.destroy', $comment))
+        ->delete(route('comments.destroy', ['comment' => $comment, 'page' => 2]))
         ->assertRedirect($comment->post->showRoute(['page' => 2]));
 });
 

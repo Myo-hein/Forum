@@ -19,6 +19,7 @@ class Post extends Model
         'body',
         'user_id',
         'html',
+        'topic_id'
     ];
 
     public function user()

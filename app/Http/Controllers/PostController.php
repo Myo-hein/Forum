@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\TopicResource;
 use App\Models\Post;
 use App\Models\Topic;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,18 +22,17 @@ class PostController extends Controller
     public function index(?Topic $topic = null)
     {
         $posts = Post::with(['user', 'topic'])
-            ->when($topic, fn (Builder $query) => $query->whereBelongsTo($topic))
+            ->when($topic, fn(Builder $query) => $query->whereBelongsTo($topic))
             ->latest('id')
             ->paginate();
 
-        return Inertia::render(
-            'Posts/Index',
-            [
-                'posts' => PostResource::collection($posts),
-                'selectedTopic' => fn () => $topic ? $topic : null
-            ]
-        );
+        return inertia('Posts/Index', [
+            'posts' => PostResource::collection($posts),
+            'topics' => fn() => TopicResource::collection(Topic::all()),
+            'selectedTopic' => fn() => $topic ? TopicResource::make($topic) : null,
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -40,7 +40,9 @@ class PostController extends Controller
     public function create()
     {
         $this->authorize('create', Post::class);;
-        return Inertia::render('Posts/Create');
+        return Inertia::render('Posts/Create', [
+            'topics' => fn () => TopicResource::collection(Topic::all())
+        ]);
     }
 
     /**
@@ -50,6 +52,7 @@ class PostController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:100'],
+            'topic_id' => ['required', 'integer', 'exists:topics,id'],
             'body' => ['required', 'string', 'max:3000'],
         ]);
 
@@ -73,7 +76,7 @@ class PostController extends Controller
             return redirect($post->showRoute($request->query()), status: 301);
         }
 
-        $post->load('user');
+        $post->load('user', 'topic');
 
         return inertia('Posts/Show', [
             'post' => fn() => PostResource::make($post),

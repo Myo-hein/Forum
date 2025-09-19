@@ -1,11 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
-defineProps({
-    modelValue: String,
-});
+const model = defineModel();
 
-defineEmits(['update:modelValue']);
 
 const input = ref(null);
 
@@ -22,7 +19,6 @@ defineExpose({ focus: () => input.value.focus() });
     <input
         ref="input"
         class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-        :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
+        v-model="model"
     >
 </template>

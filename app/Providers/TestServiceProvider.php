@@ -10,9 +10,7 @@ use Inertia\Testing\AssertableInertia;
 
 class TestServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
+
     public function register(): void
     {
         //
@@ -29,28 +27,38 @@ class TestServiceProvider extends ServiceProvider
 
         AssertableInertia::macro('hasResource', function (string $key, JsonResource $resource) {
             $this->has($key);
-            expect($this->prop($key))->toEqual($resource->response()->getData(true));
 
+            $actual = $this->prop($key);
+            $expected = $resource->response()->getData(true);
+
+            expect($actual)->toEqual($expected);
             return $this;
         });
 
         AssertableInertia::macro('hasPaginatedResource', function (string $key, ResourceCollection $resource) {
-            $this->hasResource("{$key}.data", $resource);
-            expect($this->prop($key))->toHaveKeys(['data', 'links', 'meta']);
+            $this->has("{$key}.data");
+            $this->has("{$key}.links");
+            $this->has("{$key}.meta");
 
+            $actualData = $this->prop("{$key}.data");
+            $expectedResponse = $resource->response()->getData(true);
+            $expectedData = $expectedResponse['data'] ?? $expectedResponse;
+
+            expect($actualData)->toEqual($expectedData);
             return $this;
         });
 
         TestResponse::macro('assertHasResource', function (string $key, JsonResource $resource) {
-            return $this->assertInertia(fn(AssertableInertia $inertia) => $inertia->hasResource($key, $resource));
+            return $this->assertInertia(fn (AssertableInertia $inertia) => $inertia->hasResource($key, $resource));
         });
 
         TestResponse::macro('assertHasPaginatedResource', function (string $key, ResourceCollection $resource) {
-            return $this->assertInertia(fn(AssertableInertia $inertia) => $inertia->hasPaginatedResource($key, $resource));
+            return $this->assertInertia(fn (AssertableInertia $inertia) => $inertia->hasPaginatedResource($key, $resource));
         });
 
         TestResponse::macro('assertComponent', function (string $component) {
-            return $this->assertInertia(fn(AssertableInertia $inertia) => $inertia->component($component, true));
+            return $this->assertInertia(fn (AssertableInertia $inertia) => $inertia->component($component, true));
         });
     }
 }
+

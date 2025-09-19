@@ -10,6 +10,19 @@
                     <InputError :message="form.errors.title" class="mt-1" />
                 </div>
 
+                <div>
+                    <InputLabel for="topic_id">Select a Topic</InputLabel>
+                    <select v-model="form.topic_id"
+                        id="topic_id"
+                        class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    >
+                        <option v-for="topic in topics.data" :key="topic.id" :value="topic.id">
+                            {{ topic.name }}
+                        </option>
+                    </select>
+                    <InputError :message="form.errors.topic_id" class="mt-1" />
+                </div>
+
                 <div class="mt-3">
                     <InputLabel for="body" class="sr-only">Body</InputLabel>
                      <MarkdownEditor v-model="form.body" editorClass="min-h-[600px]">
@@ -48,9 +61,12 @@ import { isInProduction } from "@/Utilities/env.js";
 import axios from "axios";
 import PageHeading from "@/Components/PageHeading.vue";
 
+const props = defineProps(['topics']);
+
 const form = useForm({
     title: '',
-    body: '',
+    body: 'Hello World',
+    topic_id: props.topics.data[0].id,
 });
 
 const createPost = () => form.post(route(
@@ -58,9 +74,9 @@ const createPost = () => form.post(route(
 ));
 
 const autofill = async () => {
-    // if (isInProduction()) {
-    //     return;
-    // }
+    if (isInProduction()) {
+        return;
+    }
 
     const response = await axios.get('/local/post-content');
 

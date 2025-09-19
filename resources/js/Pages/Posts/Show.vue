@@ -5,6 +5,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import MarkdownEditor from '@/Components/MarkdownEditor.vue';
 import Pagination from '@/Components/Pagination.vue';
+import Pill from '@/Components/Pill.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useConfirm } from '@/Composables/useConfirm';
@@ -17,6 +18,8 @@ const props = defineProps([
     'post',
     'comments'
 ]);
+
+console.log(props.post);
 
 const formattedDate = (date) => {
     return relativeDate(date);
@@ -72,7 +75,9 @@ const deleteComment = async (commentID) => {
 
     router.delete(route('comments.destroy', {
         comment: commentID,
-        page: props.comments.meta.current_page
+        page: props.comments.data.length > 1
+            ? props.comments.meta.current_page
+            : Math.max(props.comments.meta.current_page - 1, 1)
     }), {
         preserveScroll: true,
     });
@@ -83,7 +88,9 @@ const deleteComment = async (commentID) => {
 <template>
     <AppLayout>
         <Container>
-            <PageHeading>{{ post.data.title }}</PageHeading>
+             <Pill :href="route('posts.index', {topic: post.data.topic.slug})">{{ post.data.topic.name }}</Pill>
+
+            <PageHeading class="block mt-2">{{ post.data.title }}</PageHeading>
 
             <h2 class="text-sm text-gray-600">{{ formattedDate(post.data.created_at) }} ago by {{ post.data.user.name }}</h2>
 
