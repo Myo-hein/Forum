@@ -5,7 +5,8 @@
         </div>
         <div>
             <div class="mt-1 prose prose-sm max-w-none" v-html="comment.html"></div>
-            <span class="first-letter:uppercase block pt-1 text-xs text-gray-600">By {{ comment.user.name }} {{ relativeDate(comment.created_at) }} ago</span>
+            <span class="first-letter:uppercase block pt-1 text-xs text-gray-600">By {{ comment.user.name }} {{ relativeDate(comment.created_at) }}</span>
+            <span class="text-pink-500 text-xs">{{ comment.likes_count }} likes</span>
         </div>
     </div>
 

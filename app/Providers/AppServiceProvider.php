@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Post;
+use App\Models\Comment;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as InertiaAssert;
@@ -30,5 +34,11 @@ class AppServiceProvider extends ServiceProvider
             /** @var \Illuminate\Testing\TestResponse $this */
             return InertiaAssert::fromTestResponse($this)->hasPaginatedResource($resourceName, $resourceClass);
         });
+
+        Relation::enforceMorphMap([
+            'post' => Post::class,
+            'comment' => Comment::class,
+            'user' => User::class
+        ]);
     }
 }

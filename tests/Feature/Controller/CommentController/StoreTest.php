@@ -6,8 +6,6 @@ use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 
-use function Pest\Laravel\actingAs;
-
 it('requires authentication', function () {
     $post = Post::factory()->create();
 
@@ -24,6 +22,7 @@ it('can store a comment', function () {
 
     $this->actingAs($user)->post(route('posts.comments.store', $post), [
         'body' => 'This is a comment',
+        'post_id' => $post->id
     ]);
 
     $this->assertDatabaseHas(Comment::class, [

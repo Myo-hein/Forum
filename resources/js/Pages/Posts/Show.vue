@@ -87,13 +87,20 @@ const deleteComment = async (commentID) => {
 
 <template>
     <AppLayout>
+        <Head>
+            <link rel="canonical" :href="post.data.routes.show" />
+        </Head>
+
         <Container>
              <Pill :href="route('posts.index', {topic: post.data.topic.slug})">{{ post.data.topic.name }}</Pill>
 
             <PageHeading class="block mt-2">{{ post.data.title }}</PageHeading>
 
-            <h2 class="text-sm text-gray-600">{{ formattedDate(post.data.created_at) }} ago by {{ post.data.user.name }}</h2>
+            <h2 class="text-sm text-gray-600">{{ formattedDate(post.data.created_at) }} by {{ post.data.user.name }}</h2>
 
+            <div class="mt-4">
+                <span class="text-pink-500 font-bold">{{ post.data.likes_count }} likes</span>
+            </div>
             <article class="mt-6 prose prose-sm max-w-none" v-html="post.data.html">
             </article>
 

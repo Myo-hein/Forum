@@ -6,26 +6,30 @@ use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 
-class CommentController extends Controller
+class CommentController extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function __construct()
+    {
+        $this->authorizeResource(Comment::class, 'comment');
+    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request, Post $post)
     {
-        $this->authorize('create', Comment::class);
-
         $data = $request->validate(['body' => ['required', 'string', 'max:2500']]);
 
         Comment::create([
             ...$data,
             'post_id' => $post->id,
             'user_id' => $request->user()->id,
-
         ]);
 
         return redirect($post->showRoute())
@@ -37,7 +41,6 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        $this->authorize('update', $comment);
 
         $data = $request->validate(['body' => ['required', 'string', 'max:2500']]);
 
@@ -53,8 +56,6 @@ class CommentController extends Controller
      */
     public function destroy(Request $request, Comment $comment)
     {
-        $this->authorize('delete', $comment);
-
         $comment->delete();
 
         return redirect($comment->post->showRoute(

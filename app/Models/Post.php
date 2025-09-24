@@ -6,6 +6,7 @@ use App\Models\Concerns\ConvertMarkdownToHtml;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -35,6 +36,11 @@ class Post extends Model
     public function topic()
     {
         return $this->belongsTo(Topic::class);
+    }
+
+    public function likes(): MorphMany
+    {
+        return $this->morphMany(Like::class, 'likeable');
     }
 
     public function title(): Attribute
